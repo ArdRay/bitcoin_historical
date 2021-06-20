@@ -29,4 +29,4 @@ jobs:
           git config --global user.name "Github Actions Bot"
           git add -A 
           git diff-index --quiet HEAD || git commit -m '[skip ci] Updated bitcoin historical data $timestamp'
-          git push -u origin master
+          git push -u origin main
