@@ -6,16 +6,16 @@ import json
 from dateutil import tz
 
 def fetch_daily_data(symbol, start, end):
-    pair_split = symbol.split('/')  # symbol must be in format XXX/XXX ie. BTC/EUR
+    pair_split = symbol.split('/') 
     symbol = pair_split[0] + '-' + pair_split[1]
     url = f'https://api.pro.coinbase.com/products/{symbol}/candles?granularity=3600&start={start}&end={end}'
     try:
         response = requests.get(url, timeout=2)
         print('HTTP code: {} - {} to {} - size: {}'.format(response.status_code,start,end,len(response.content)))
-        if response.status_code == 200:  # check to make sure the response from server is good
+        if response.status_code == 200: 
             data = pd.DataFrame(json.loads(response.text), columns=['unix', 'low', 'high', 'open', 'close', 'volume'])
-            data['date'] = pd.to_datetime(data['unix'], unit='s').dt.tz_localize(tz.tzlocal())  # convert to a readable date
-            data['vol_fiat'] = data['volume'] * data['close']      # multiply the BTC volume by closing price to approximate fiat volume
+            data['date'] = pd.to_datetime(data['unix'], unit='s').dt.tz_localize(tz.tzlocal())
+            data['vol_fiat'] = data['volume'] * data['close'] ##approximate
             return(data)
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
@@ -31,7 +31,6 @@ def fetch_present_data(filename='historical_data/bitcoin.csv'):
 def fetch_and_save_data(current_data, filename='historical_data/bitcoin.csv'):
     end_date = pd.Timestamp.today().strftime('%Y-%m-%d %H:00:00')
     start_date = current_data.tail(1).index.strftime('%Y-%m-%d %H:00:00').values[0]
-    print(start_date, end_date)
     newly_fetched_data = fetch_daily_data('BTC/USD', start_date, end_date)
     newly_fetched_data = newly_fetched_data.sort_values(by=['date'])
     newly_fetched_data = newly_fetched_data.set_index('date')
