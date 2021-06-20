@@ -23,7 +23,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - run: |
-          git remote add origin git@github.com:${{ secrets.REPO_USERNAME }}/${{ secrets.REPO_NAME }}.git
+          git remote set-url origin git@github.com:${{ secrets.REPO_USERNAME }}/${{ secrets.REPO_NAME }}.git
           timestamp=`date "+%Y%m%d-%H%M%S"
           git add . && git commit -m '[skip ci] Updated bitcoin historical data $timestamp'
           git push -u origin master
