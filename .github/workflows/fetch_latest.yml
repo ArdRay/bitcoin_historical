@@ -1,0 +1,29 @@
+name: fetch_latest
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '5 * * * *'
+jobs:
+  fetch_and_save:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - run: python fetch_latest_data.py -f historical_data/bitcoin.csv
+      - uses: webfactory/ssh-agent@v0.5.3
+          with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - run: |
+          git remote add origin git@github.com:${{ secrets.REPO_USERNAME }}/${{ secrets.REPO_NAME }}.git
+          timestamp=`date "+%Y%m%d-%H%M%S"
+          git add . && git commit -m '[skip ci] Updated bitcoin historical data $timestamp'
+          git push -u origin master
