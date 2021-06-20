@@ -25,5 +25,8 @@ jobs:
       - run: |
           git remote set-url origin git@github.com:${{ secrets.REPO_USERNAME }}/${{ secrets.REPO_NAME }}.git
           timestamp=`date "+%Y%m%d-%H%M%S"`
-          git add . && git commit -m '[skip ci] Updated bitcoin historical data $timestamp'
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "Github Actions Bot"
+          git add -A 
+          git diff-index --quiet HEAD || git commit -m '[skip ci] Updated bitcoin historical data $timestamp'
           git push -u origin master
