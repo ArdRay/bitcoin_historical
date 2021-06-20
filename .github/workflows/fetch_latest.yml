@@ -20,8 +20,8 @@ jobs:
           pip install -r requirements.txt
       - run: python fetch_latest_data.py -f historical_data/bitcoin.csv
       - uses: webfactory/ssh-agent@v0.5.3
-          with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - run: |
           git remote add origin git@github.com:${{ secrets.REPO_USERNAME }}/${{ secrets.REPO_NAME }}.git
           timestamp=`date "+%Y%m%d-%H%M%S"
