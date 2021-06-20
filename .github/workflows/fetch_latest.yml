@@ -24,9 +24,8 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - run: |
           git remote set-url origin git@github.com:${{ secrets.REPO_USERNAME }}/${{ secrets.REPO_NAME }}.git
-          timestamp=`date "+%Y%m%d-%H%M%S"`
           git config --global user.email "github-actions@github.com"
           git config --global user.name "Github Actions Bot"
           git add -A 
-          git diff-index --quiet HEAD || git commit -m '[skip ci] Updated bitcoin historical data $timestamp'
+          git diff-index --quiet HEAD || git commit -m '[skip ci] Updated bitcoin historical data at `date "+%Y%m%d-%H%M%S"`'
           git push -u origin main
