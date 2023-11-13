@@ -1,6 +1,7 @@
 #!/bin/python3
 import pandas as pd
 import requests
+import datetime
 import argparse
 import json
 from dateutil import tz
@@ -46,8 +47,16 @@ def main():
     parser.add_argument('-f','--file', help='Path to file is required.', required=True)
     args = parser.parse_args()
 
-    current_data = fetch_present_data(args.file)
-    fetch_and_save_data(current_data, args.file)   
+    current_year = datetime.date.today().year
+    adjusted_file_path = "historical_data/bitcoin_{}.csv".format(current_year)
+    
+    # Dirty adjustment to avoid ever-increasing CSV file
+    if current_year >= 2024:
+        current_data = fetch_present_data(adjusted_file_path)
+        fetch_and_save_data(current_data, adjusted_file_path)  
+    else:
+        current_data = fetch_present_data(args.file)
+        fetch_and_save_data(current_data, args.file)   
 
 if __name__ == "__main__":
     main()
